@@ -4,6 +4,14 @@
         "access": "/dev/stdout",
         "error": "/dev/stderr"
     },
+    "dns": {
+        "servers": [
+            "1.1.1.1",
+            "8.8.8.8",
+            "https+local://dns.cloudflare.com/dns-query"
+        ],
+        "queryStrategy": "UseIPv4"
+    },
     "inbounds": [{
         "tag": "VLESS_XHTTP_IN",
         "listen": "127.0.0.1",
@@ -13,44 +21,37 @@
             "clients": [{
                 "id": "saekaaa",
                 "flow": "",
-                "email": "saekaaa@ccmail.uk"
+                "email": "saeka@404.local"
             }],
-            "decryption": "none",
-            "fallback": {
-                "dest": 8080
-            }
+            "decryption": "none"
         },
         "streamSettings": {
             "network": "xhttp",
             "xhttpSettings": {
                 "path": "/saeka",
+                "host": "",
                 "mode": "packet-up",
-                "xmux": {
-                    "maxConcurrency": "16-32",
-                    "cMaxReuseTimes": 1024,
-                    "hMaxReusableSecs": "1800-3600"
-                },
-                "scMaxEachPostBytes": "1000000",
-                "scMaxBufferedPosts": 100,
-                "scStreamUpServerSecs": "20-80",
-                "xPaddingBytes": "100-1000",
-                "noSSEHeader": false,
-                "noGRPCHeader": false
+                "extra": {
+                    "xmux": {
+                        "maxConcurrency": "16-32"
+                    },
+                    "xPaddingBytes": "100-1000",
+                    "headers": {
+                        "Referer": "https://www.google.com/"
+                    }
+                }
             },
             "sockopt": {
                 "tcpFastOpen": true,
                 "tcpNoDelay": true,
                 "tcpKeepAliveIdle": 30,
                 "tcpKeepAliveInterval": 15,
-                "tcpKeepAliveCount": 5,
-                "tcpCongestion": "bbr"
+                "tcpKeepAliveCount": 5
             }
         },
         "sniffing": {
             "enabled": true,
-            "destOverride": ["http", "tls", "quic"],
-            "metadataOnly": false,
-            "routeOnly": false
+            "destOverride": ["http", "tls", "quic"]
         }
     }],
     "outbounds": [{
@@ -60,28 +61,8 @@
         "streamSettings": {
             "sockopt": {
                 "tcpFastOpen": true,
-                "tcpNoDelay": true,
-                "tcpCongestion": "bbr"
+                "tcpNoDelay": true
             }
         }
-    }, {
-        "tag": "BLOCK",
-        "protocol": "blackhole",
-        "settings": {}
-    }],
-    "routing": {
-        "domainStrategy": "AsIs",
-        "rules": [
-            {
-                "type": "field",
-                "ip": ["127.0.0.0/8", "::1/128"],
-                "outboundTag": "DIRECT"
-            },
-            {
-                "type": "field",
-                "protocol": ["bittorrent"],
-                "outboundTag": "BLOCK"
-            }
-        ]
-    }
-}
+    }]
+        }
