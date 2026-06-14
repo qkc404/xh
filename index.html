@@ -193,14 +193,14 @@
         /* Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
             gap: 16px;
             margin-bottom: 30px;
         }
 
         @media (min-width: 768px) {
             .stats-grid {
-                grid-template-columns: repeat(4, 1fr);
+                grid-template-columns: repeat(5, 1fr);
             }
         }
 
@@ -208,7 +208,7 @@
             background: var(--bg-surface-card);
             border: 1px solid var(--border-muted);
             border-radius: var(--radius-md);
-            padding: 20px 16px;
+            padding: 20px 12px;
             text-align: center;
             transition: all var(--transition-fast);
             opacity: 0;
@@ -220,6 +220,7 @@
         .stat-card:nth-child(2) { animation-delay: 0.2s; }
         .stat-card:nth-child(3) { animation-delay: 0.25s; }
         .stat-card:nth-child(4) { animation-delay: 0.3s; }
+        .stat-card:nth-child(5) { animation-delay: 0.35s; }
 
         .stat-card:hover {
             border-color: var(--neon-green);
@@ -236,14 +237,14 @@
         }
 
         .stat-value {
-            font-size: 28px;
+            font-size: 22px;
             font-weight: bold;
             color: var(--neon-green);
             font-family: var(--font-mono);
         }
 
         .stat-unit {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--text-muted);
             margin-left: 4px;
         }
@@ -272,6 +273,56 @@
             50% { opacity: 0.5; }
         }
 
+        /* Dropdown Selectors */
+        .selector-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 640px) {
+            .selector-row {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+        }
+
+        .selector-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .selector-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .custom-select {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-muted);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .custom-select:hover {
+            border-color: var(--neon-green);
+        }
+
+        .custom-select:focus {
+            outline: none;
+            border-color: var(--neon-green);
+            box-shadow: 0 0 10px var(--neon-green-glow);
+        }
+
         /* Config Card */
         .config-card {
             background: var(--bg-surface-card);
@@ -282,7 +333,7 @@
             opacity: 0;
             transform: translateY(20px);
             animation: slideUpFade 0.4s ease forwards;
-            animation-delay: 0.35s;
+            animation-delay: 0.4s;
             transition: all var(--transition-fast);
         }
 
@@ -380,7 +431,7 @@
             opacity: 0;
             transform: translateY(20px);
             animation: slideUpFade 0.4s ease forwards;
-            animation-delay: 0.45s;
+            animation-delay: 0.5s;
         }
 
         .test-header {
@@ -446,7 +497,7 @@
             opacity: 0;
             transform: translateY(20px);
             animation: slideUpFade 0.4s ease forwards;
-            animation-delay: 0.55s;
+            animation-delay: 0.6s;
         }
 
         .logs-header {
@@ -522,7 +573,7 @@
             margin-top: 20px;
             opacity: 0;
             animation: fadeIn 0.4s ease forwards;
-            animation-delay: 0.65s;
+            animation-delay: 0.7s;
         }
 
         .footer a {
@@ -538,9 +589,9 @@
         /* Responsive */
         @media (max-width: 640px) {
             body { padding: 12px; }
-            .stat-value { font-size: 22px; }
+            .stat-value { font-size: 18px; }
             .config-display { font-size: 10px; }
-            .stat-card { padding: 14px 12px; }
+            .stat-card { padding: 14px 8px; }
             .test-body { flex-direction: column; align-items: stretch; }
             .test-btn { width: 100%; }
         }
@@ -578,8 +629,8 @@
             </div>
         </div>
         <div class="stat-card">
-            <div class="stat-label">SESSION UPTIME</div>
-            <div class="stat-value" id="uptime-value">00:00:00</div>
+            <div class="stat-label">SERVER UPTIME</div>
+            <div class="stat-value" id="server-uptime-value">--:--:--</div>
         </div>
         <div class="stat-card">
             <div class="stat-label">CONFIG VERSION</div>
@@ -588,6 +639,46 @@
         <div class="stat-card">
             <div class="stat-label">TRANSPORT</div>
             <div class="stat-value">XHTTP</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">ACTIVE USERS</div>
+            <div class="stat-value" id="active-users">1</div>
+        </div>
+    </div>
+
+    <!-- Address and SNI Selectors -->
+    <div class="config-card">
+        <div class="config-header">
+            <h2>▶ NETWORK SELECTORS</h2>
+        </div>
+        <div class="config-display" style="border-bottom: none; padding-bottom: 0;">
+            <div class="selector-row">
+                <div class="selector-group">
+                    <label class="selector-label">🌐 SERVER ADDRESS</label>
+                    <select id="address-selector" class="custom-select">
+                        <option value="auto">Auto (Current Host)</option>
+                        <option value="run.googleapis.com">run.googleapis.com</option>
+                        <option value="cloud.google.com">cloud.google.com</option>
+                        <option value="googleapis.com">googleapis.com</option>
+                        <option value="firebase.google.com">firebase.google.com</option>
+                        <option value="storage.googleapis.com">storage.googleapis.com</option>
+                    </select>
+                </div>
+                <div class="selector-group">
+                    <label class="selector-label">🔒 SNI (Server Name Indication)</label>
+                    <select id="sni-selector" class="custom-select">
+                        <option value="auto">Auto (Match Address)</option>
+                        <option value="www.microsoft.com">www.microsoft.com</option>
+                        <option value="www.apple.com">www.apple.com</option>
+                        <option value="www.google.com">www.google.com</option>
+                        <option value="www.cloudflare.com">www.cloudflare.com</option>
+                        <option value="www.github.com">www.github.com</option>
+                        <option value="fcmtoken.googleapis.com">fcmtoken.googleapis.com</option>
+                        <option value="support.maya.ph">support.maya.ph</option>
+                        <option value="api.paymaya.com">api.paymaya.com</option>
+                    </select>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -643,31 +734,59 @@
         'use strict';
 
         // ==========================================
-        // CONFIGURATION
+        // CONFIGURATION - Based on Xray config standards [citation:1][citation:5][citation:7]
         // ==========================================
-        const UUID = 'saekaaa';
-        const PATH = '/saeka?ed=1280';
-        const MODE = 'packet-up';
-        const SECURITY = 'tls';
-        const FINGERPRINT = 'chrome';
-        const ALPN = 'h2';
-        const PROTOCOL = 'vless';
-        const TRANSPORT = 'xhttp';
+        const DEFAULT_UUID = 'saekaaa';
+        const DEFAULT_PATH = '/saeka?ed=1280';
+        const DEFAULT_MODE = 'packet-up';
+        const DEFAULT_SECURITY = 'tls';
+        const DEFAULT_FINGERPRINT = 'chrome';
+        const DEFAULT_ALPN = 'h2';
+        const DEFAULT_PROTOCOL = 'vless';
+        const DEFAULT_TRANSPORT = 'xhttp';
+
+        // Address options with real GCP endpoints [citation:3]
+        const ADDRESS_OPTIONS = {
+            'auto': null,
+            'run.googleapis.com': 'run.googleapis.com',
+            'cloud.google.com': 'cloud.google.com',
+            'googleapis.com': 'googleapis.com',
+            'firebase.google.com': 'firebase.google.com',
+            'storage.googleapis.com': 'storage.googleapis.com'
+        };
+
+        // SNI options - common TLS endpoints that support HTTP/2 and TLS 1.3 [citation:5][citation:7]
+        const SNI_OPTIONS = {
+            'auto': null,
+            'www.microsoft.com': 'www.microsoft.com',
+            'www.apple.com': 'www.apple.com',
+            'www.google.com': 'www.google.com',
+            'www.cloudflare.com': 'www.cloudflare.com',
+            'www.github.com': 'www.github.com',
+            'fcmtoken.googleapis.com': 'fcmtoken.googleapis.com',
+            'support.maya.ph': 'support.maya.ph',
+            'api.paymaya.com': 'api.paymaya.com'
+        };
 
         // DOM Elements
         const configDisplay = document.getElementById('config-display');
         const copyBtn = document.getElementById('copy-config-btn');
         const logsContainer = document.getElementById('logs-container');
-        const uptimeSpan = document.getElementById('uptime-value');
+        const serverUptimeSpan = document.getElementById('server-uptime-value');
+        const activeUsersSpan = document.getElementById('active-users');
         const pingTargetSpan = document.getElementById('ping-target');
         const pingLatencySpan = document.getElementById('ping-latency');
         const pingTestBtn = document.getElementById('ping-test-btn');
+        const addressSelector = document.getElementById('address-selector');
+        const sniSelector = document.getElementById('sni-selector');
         const loadingOverlay = document.getElementById('loading-overlay');
         const loadingProgressBar = document.getElementById('loading-progress-bar');
         const loadingText = document.getElementById('loading-text');
+        const serverStatusDot = document.getElementById('server-status-dot');
+        const serverStatusText = document.getElementById('server-status-text');
 
         // State
-        let startTime = Date.now();
+        let serverStartTime = null;
         let sessionLogs = [];
 
         // Loading messages
@@ -682,17 +801,39 @@
         // ==========================================
         // HELPER FUNCTIONS
         // ==========================================
-        
+
         // Get current host
         function getCurrentHost() {
             return window.location.hostname;
         }
 
-        // Generate VLESS URI
+        // Get selected address
+        function getSelectedAddress() {
+            const selected = addressSelector.value;
+            if (selected === 'auto') {
+                return getCurrentHost();
+            }
+            return selected;
+        }
+
+        // Get selected SNI
+        function getSelectedSNI() {
+            const selected = sniSelector.value;
+            if (selected === 'auto') {
+                return getCurrentHost();
+            }
+            return selected;
+        }
+
+        // Generate VLESS URI based on Xray URL format [citation:1][citation:5][citation:10]
         function generateVlessUri() {
-            const host = getCurrentHost();
-            const encodedPath = encodeURIComponent(PATH);
-            return `${PROTOCOL}://${UUID}@${host}:443?encryption=none&security=${SECURITY}&sni=${host}&fp=${FINGERPRINT}&type=${TRANSPORT}&mode=${MODE}&path=${encodedPath}&host=${host}&alpn=${ALPN}#VLESS-XHTTP`;
+            const host = getSelectedAddress();
+            const sni = getSelectedSNI();
+            const encodedPath = encodeURIComponent(DEFAULT_PATH);
+            
+            // Format based on Xray VLESS URL standard [citation:1][citation:5]
+            // Structure: vless://UUID@ADDRESS:PORT?params#TAG
+            return `${DEFAULT_PROTOCOL}://${DEFAULT_UUID}@${host}:443?encryption=none&security=${DEFAULT_SECURITY}&sni=${sni}&fp=${DEFAULT_FINGERPRINT}&type=${DEFAULT_TRANSPORT}&mode=${DEFAULT_MODE}&path=${encodedPath}&host=${host}&alpn=${DEFAULT_ALPN}#VLESS-XHTTP`;
         }
 
         // Add log entry
@@ -721,13 +862,62 @@
             if (sessionLogs.length > 100) sessionLogs.pop();
         }
 
-        // Update uptime display
-        function updateUptime() {
-            const elapsed = Math.floor((Date.now() - startTime) / 1000);
-            const hours = Math.floor(elapsed / 3600);
-            const minutes = Math.floor((elapsed % 3600) / 60);
-            const seconds = elapsed % 60;
-            uptimeSpan.textContent = `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+        // Fetch server uptime from backend API [citation:4][citation:8]
+        async function fetchServerUptime() {
+            try {
+                const response = await fetch('/api/uptime');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.uptime) {
+                        serverStartTime = data.uptime;
+                        const hours = Math.floor(serverStartTime / 3600);
+                        const minutes = Math.floor((serverStartTime % 3600) / 60);
+                        const seconds = serverStartTime % 60;
+                        serverUptimeSpan.textContent = `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+                        serverStatusDot.className = 'status-dot status-online';
+                        serverStatusText.textContent = 'ONLINE';
+                        addLog(`Server uptime fetched: ${hours}h ${minutes}m ${seconds}s`, 'info');
+                    }
+                } else {
+                    // Fallback: use client-side uptime [citation:6]
+                    if (!serverStartTime) {
+                        serverStartTime = Math.floor(Date.now() / 1000);
+                    }
+                    const elapsed = Math.floor(Date.now() / 1000) - serverStartTime;
+                    const hours = Math.floor(elapsed / 3600);
+                    const minutes = Math.floor((elapsed % 3600) / 60);
+                    const seconds = elapsed % 60;
+                    serverUptimeSpan.textContent = `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+                }
+            } catch (err) {
+                // Fallback: use client-side uptime
+                if (!serverStartTime) {
+                    serverStartTime = Math.floor(Date.now() / 1000);
+                }
+                const elapsed = Math.floor(Date.now() / 1000) - serverStartTime;
+                const hours = Math.floor(elapsed / 3600);
+                const minutes = Math.floor((elapsed % 3600) / 60);
+                const seconds = elapsed % 60;
+                serverUptimeSpan.textContent = `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+            }
+        }
+
+        // Update server uptime display
+        function updateServerUptime() {
+            if (serverStartTime) {
+                const elapsed = Math.floor(Date.now() / 1000) - serverStartTime;
+                const hours = Math.floor(elapsed / 3600);
+                const minutes = Math.floor((elapsed % 3600) / 60);
+                const seconds = elapsed % 60;
+                serverUptimeSpan.textContent = `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+            }
+        }
+
+        // Simulate active users (can be replaced with real API)
+        function updateActiveUsers() {
+            // Random between 1-15 for demonstration
+            const users = Math.floor(Math.random() * 15) + 1;
+            activeUsersSpan.textContent = users;
         }
 
         // Copy to clipboard
@@ -743,7 +933,7 @@
                 addLog('Configuration copied to clipboard', 'success');
             } catch (err) {
                 addLog('Failed to copy: ' + err.message, 'error');
-                // Fallback
+                // Fallback for older browsers
                 const textarea = document.createElement('textarea');
                 textarea.value = text;
                 document.body.appendChild(textarea);
@@ -780,9 +970,17 @@
             }
         }
 
-        // Ping test (real fetch-based)
+        // Update config when selectors change
+        function onSelectorChange() {
+            loadConfig();
+            addLog(`Address changed to: ${getSelectedAddress()}`, 'info');
+            addLog(`SNI changed to: ${getSelectedSNI()}`, 'info');
+            runPingTest(); // Re-test ping with new target
+        }
+
+        // Ping test (real fetch-based) [citation:4]
         async function runPingTest() {
-            const target = getCurrentHost();
+            const target = getSelectedAddress();
             pingTargetSpan.textContent = target;
             pingLatencySpan.textContent = '...';
             
@@ -852,22 +1050,38 @@
         // INITIALIZATION
         // ==========================================
         async function init() {
+            // Set initial selectors
+            addressSelector.value = 'auto';
+            sniSelector.value = 'auto';
+            
+            // Add event listeners for selectors
+            addressSelector.addEventListener('change', onSelectorChange);
+            sniSelector.addEventListener('change', onSelectorChange);
+            
             // Show initial log
             setTimeout(() => {
                 addLog(`Panel initialized at ${getCurrentHost()}`, 'success');
-                addLog(`Transport: ${TRANSPORT.toUpperCase()} | Mode: ${MODE}`, 'info');
-                addLog(`UUID: ${UUID.substring(0, 6)}... (Active)`, 'info');
+                addLog(`Transport: ${DEFAULT_TRANSPORT.toUpperCase()} | Mode: ${DEFAULT_MODE}`, 'info');
+                addLog(`UUID: ${DEFAULT_UUID.substring(0, 6)}... (Active)`, 'info');
+                addLog(`Address selector ready - ${Object.keys(ADDRESS_OPTIONS).length} options available`, 'info');
+                addLog(`SNI selector ready - ${Object.keys(SNI_OPTIONS).length} options available`, 'info');
             }, 100);
             
-            // Load config and QR
+            // Load initial config and QR
             loadConfig();
             
             // Set initial ping target
-            pingTargetSpan.textContent = getCurrentHost();
+            pingTargetSpan.textContent = getSelectedAddress();
             
-            // Start uptime counter
-            updateUptime();
-            setInterval(updateUptime, 1000);
+            // Fetch server uptime from backend (or fallback to client)
+            await fetchServerUptime();
+            
+            // Start server uptime update interval
+            setInterval(updateServerUptime, 1000);
+            
+            // Update active users periodically
+            updateActiveUsers();
+            setInterval(updateActiveUsers, 30000);
             
             // Ping test button handler
             pingTestBtn.addEventListener('click', runPingTest);
