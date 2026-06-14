@@ -5,64 +5,55 @@
         "error": "/dev/stderr"
     },
     "dns": {
-        "servers": [
-            "1.1.1.1",
-            "8.8.8.8",
-            "https+local://dns.cloudflare.com/dns-query"
-        ],
+        "servers": ["1.1.1.1", "8.8.8.8"],
         "queryStrategy": "UseIPv4"
     },
-    "inbounds": [{
-        "tag": "VLESS_XHTTP_IN",
-        "listen": "127.0.0.1",
-        "port": 10000,
-        "protocol": "vless",
-        "settings": {
-            "clients": [{
-                "id": "saekaaa",
-                "flow": "",
-                "email": "saeka@404.local"
-            }],
-            "decryption": "none"
-        },
-        "streamSettings": {
-            "network": "xhttp",
-            "xhttpSettings": {
-                "path": "/saeka",
-                "host": "",
-                "mode": "packet-up",
-                "extra": {
+    "inbounds": [
+        {
+            "tag": "VLESS_XHTTP_IN",
+            "listen": "127.0.0.1",
+            "port": 10000,
+            "protocol": "vless",
+            "settings": {
+                "clients": [
+                    {
+                        "id": "saekaaa",
+                        "flow": "",
+                        "email": "saeka@404.local"
+                    }
+                ],
+                "decryption": "none"
+            },
+            "streamSettings": {
+                "network": "xhttp",
+                "xhttpSettings": {
+                    "path": "/saeka",
+                    "mode": "packet-up",
+                    "host": "",
                     "xmux": {
                         "maxConcurrency": "16-32"
                     },
-                    "xPaddingBytes": "100-1000",
-                    "headers": {
-                        "Referer": "https://www.google.com/"
-                    }
+                    "xPaddingBytes": "100-1000"
+                },
+                "sockopt": {
+                    "tcpFastOpen": true,
+                    "tcpNoDelay": true,
+                    "tcpKeepAliveIdle": 30,
+                    "tcpKeepAliveInterval": 15,
+                    "tcpKeepAliveCount": 5
                 }
             },
-            "sockopt": {
-                "tcpFastOpen": true,
-                "tcpNoDelay": true,
-                "tcpKeepAliveIdle": 30,
-                "tcpKeepAliveInterval": 15,
-                "tcpKeepAliveCount": 5
-            }
-        },
-        "sniffing": {
-            "enabled": true,
-            "destOverride": ["http", "tls", "quic"]
-        }
-    }],
-    "outbounds": [{
-        "tag": "DIRECT",
-        "protocol": "freedom",
-        "settings": {},
-        "streamSettings": {
-            "sockopt": {
-                "tcpFastOpen": true,
-                "tcpNoDelay": true
+            "sniffing": {
+                "enabled": true,
+                "destOverride": ["http", "tls", "quic"]
             }
         }
-    }]
+    ],
+    "outbounds": [
+        {
+            "tag": "DIRECT",
+            "protocol": "freedom",
+            "settings": {}
         }
+    ]
+}
