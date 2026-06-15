@@ -27,10 +27,6 @@ PROJECT_ID=$(gcloud config get-value project 2>/dev/null | tr -d '[:space:]')
 read -r -p "$(echo -e "${CYAN}  NAME (⁠*⁠´⁠ω⁠｀⁠*⁠) [service name]: ${RESET}")" INPUT_NAME
 SERVICE_NAME=${INPUT_NAME:-vless-proxy}
 
-read -r -p "$(echo -e "${CYAN}  ENTER DECOY URL (⁠ﾉ⁠◕⁠ヮ⁠◕⁠)⁠ﾉ⁠*⁠.⁠✧ [url http/s]: ${RESET}")" USER_DECOY
-FINAL_DECOY=${USER_DECOY:-google.com}
-CLEAN_DECOY=$(echo "$FINAL_DECOY" | sed 's|https\?://||' | sed 's|/.*$||')
-
 echo -e "\n${CYAN} SELECT PERFORMANCE (⁠◠⁠‿⁠◕⁠): ${RESET}"
 echo -e "${YELLOW}  1) 1 vCPU / 2Gi RAM${RESET}"
 echo -e "${YELLOW}  2) 2 vCPU / 4Gi RAM${RESET}"
@@ -42,11 +38,6 @@ case "$PAIR_CHOICE" in
     3) CPU="4"; RAM="8Gi" ;;
     *) CPU="2"; RAM="4Gi" ;;
 esac
-
-DECOY_IP=$(dig +short "$CLEAN_DECOY" @8.8.8.8 | head -1)
-DECOY_IP=${DECOY_IP:-"142.250.197.97"}
-sed -i "s|CLEAN_DECOY|$CLEAN_DECOY|g" nginx.conf
-sed -i "s|DECOY_IP|$DECOY_IP|g" nginx.conf
 
 echo -e "\n${CYAN} PROCESSING (⁠ ⁠ꈍ⁠ᴗ⁠ꈍ⁠)... ${RESET}"
 
