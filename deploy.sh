@@ -19,15 +19,15 @@ loading() {
 clear
 echo -e "${BLUE}────────────────────────────────────────────────────${RESET}"
 echo -e "${CYAN}     VLESS FAST DEPLOYER MADE BY SAEKA TOJIRP${RESET}"
-echo -e "${CYAN}     (☞⁠ ^⁠o⁠^⁠)⁠ ⁠☞ fb.com/saekacutiee | newbie${RESET}"
+echo -e "${CYAN}     (☞ ^o^) ☞ fb.com/saekacutiee | newbie${RESET}"
 echo -e "${BLUE}────────────────────────────────────────────────────${RESET}"
 
 PROJECT_ID=$(gcloud config get-value project 2>/dev/null | tr -d '[:space:]')
 
-read -r -p "$(echo -e "${CYAN}  NAME (⁠*⁠´⁠ω⁠｀⁠*⁠) [service name]: ${RESET}")" INPUT_NAME
+read -r -p "$(echo -e "${CYAN}  NAME (*´ω｀*) [service name]: ${RESET}")" INPUT_NAME
 SERVICE_NAME=${INPUT_NAME:-vless-proxy}
 
-echo -e "\n${CYAN} SELECT PERFORMANCE (⁠◠⁠‿⁠◕⁠): ${RESET}"
+echo -e "\n${CYAN} SELECT PERFORMANCE (◠‿◕): ${RESET}"
 echo -e "${YELLOW}  1) 1 vCPU / 2Gi RAM${RESET}"
 echo -e "${YELLOW}  2) 2 vCPU / 4Gi RAM${RESET}"
 echo -e "${YELLOW}  3) 4 vCPU / 8Gi RAM${RESET}"
@@ -39,17 +39,18 @@ case "$PAIR_CHOICE" in
     *) CPU="2"; RAM="4Gi" ;;
 esac
 
-echo -e "\n${CYAN} PROCESSING (⁠ ⁠ꈍ⁠ᴗ⁠ꈍ⁠)... ${RESET}"
+echo -e "\n${CYAN} PROCESSING ( ꈍᴗꈍ)... ${RESET}"
 
-loading "BUILDING IMAGE (⁠ ⁠╹⁠▽⁠╹⁠ ⁠) "
-gcloud builds submit --tag "gcr.io/${PROJECT_ID}/${SERVICE_NAME}" . --quiet > build.log 2>&1
+loading "BUILDING IMAGE ( ╹▽╹ ) "
+# CRITICAL FIX: Force Cloud Build to use Dockerfile
+gcloud builds submit --tag "gcr.io/${PROJECT_ID}/${SERVICE_NAME}" --dockerfile Dockerfile . --quiet > build.log 2>&1
 if [ $? -ne 0 ]; then
-    echo -e "${RED}BUILD FAILED (⁠ ⁠･ั⁠﹏⁠･ั⁠)!${RESET}"
+    echo -e "${RED}BUILD FAILED ( ･ั﹏･ั)!${RESET}"
     tail -n 10 build.log
     exit 1
 fi
 
-loading "CONFIGURING CLOUD RUN ADJUSTMENTS (⁠ ⁠ꈍ⁠ᴗ⁠ꈍ⁠) "
+loading "CONFIGURING CLOUD RUN ADJUSTMENTS ( ꈍᴗꈍ) "
 gcloud run deploy "$SERVICE_NAME" \
   --image "gcr.io/${PROJECT_ID}/${SERVICE_NAME}" \
   --platform managed \
@@ -67,7 +68,7 @@ gcloud run deploy "$SERVICE_NAME" \
   --quiet > deploy.log 2>&1
 
 if [ $? -ne 0 ]; then
-    echo -e "${RED}DEPLOYMENT FAILED (⁠╥⁠﹏⁠╥⁠)!${RESET}"
+    echo -e "${RED}DEPLOYMENT FAILED (╥﹏╥)!${RESET}"
     tail -n 10 deploy.log
     exit 1
 fi
@@ -76,8 +77,8 @@ SERVICE_URL=$(gcloud run services describe "$SERVICE_NAME" --region us-central1 
 CLEAN_HOST=$(echo "$SERVICE_URL" | sed 's|https://||')
 
 echo -e "\n${BLUE}────────────────────────────────────────────────────${RESET}"
-echo -e "${CYAN} DEPLOYED SUCCESSFULLY (⁠◠⁠‿⁠・⁠)⁠—⁠☆ ${RESET}"
-echo -e "${CYAN} FULL URL (⁠｡⁠•̀⁠ᴗ⁠-⁠)  ${GREEN}${SERVICE_URL}${RESET}"
+echo -e "${CYAN} DEPLOYED SUCCESSFULLY (◠‿・)—☆ ${RESET}"
+echo -e "${CYAN} FULL URL (｡•̀ᴗ-)  ${GREEN}${SERVICE_URL}${RESET}"
 echo -e "${BLUE}────────────────────────────────────────────────────${RESET}"
 
 rm -f build.log deploy.log
