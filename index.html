@@ -738,23 +738,75 @@
         // ==========================================
         const DEFAULT_UUID = 'saekaaa';
         const DEFAULT_PATH = '/saeka?ed=1280';
-        const DEFAULT_MODE = 'packet-up';
+        const DEFAULT_MODE = '';
         const DEFAULT_SECURITY = 'tls';
         const DEFAULT_FINGERPRINT = 'chrome';
         const DEFAULT_ALPN = 'h2';
         const DEFAULT_PROTOCOL = 'vless';
-        const DEFAULT_TRANSPORT = 'xhttp';
-
+        const DEFAULT_TRANSPORT = 'httpupgrade';
+        
         // Address options with real GCP endpoints [citation:3]
         const ADDRESS_OPTIONS = {
-            'auto': null,
-            'run.googleapis.com': 'run.googleapis.com',
-            'cloud.google.com': 'cloud.google.com',
-            'googleapis.com': 'googleapis.com',
-            'firebase.google.com': 'firebase.google.com',
-            'storage.googleapis.com': 'storage.googleapis.com'
-        };
-
+    // Auto
+    'auto': null,
+    
+    // Google APIs (15)
+    'run.googleapis.com': 'run.googleapis.com',
+    'cloud.google.com': 'cloud.google.com',
+    'googleapis.com': 'googleapis.com',
+    'firebase.google.com': 'firebase.google.com',
+    'storage.googleapis.com': 'storage.googleapis.com',
+    'bigquery.googleapis.com': 'bigquery.googleapis.com',
+    'compute.googleapis.com': 'compute.googleapis.com',
+    'iam.googleapis.com': 'iam.googleapis.com',
+    'logging.googleapis.com': 'logging.googleapis.com',
+    'monitoring.googleapis.com': 'monitoring.googleapis.com',
+    'pubsub.googleapis.com': 'pubsub.googleapis.com',
+    'secretmanager.googleapis.com': 'secretmanager.googleapis.com',
+    'sqladmin.googleapis.com': 'sqladmin.googleapis.com',
+    'cloudfunctions.googleapis.com': 'cloudfunctions.googleapis.com',
+    'cloudbuild.googleapis.com': 'cloudbuild.googleapis.com',
+    
+    // Google Domains (15)
+    'google.com': 'google.com',
+    'www.google.com': 'www.google.com',
+    'googleusercontent.com': 'googleusercontent.com',
+    'gstatic.com': 'gstatic.com',
+    'googleapis.org': 'googleapis.org',
+    'googleadservices.com': 'googleadservices.com',
+    'googlesyndication.com': 'googlesyndication.com',
+    'google-analytics.com': 'google-analytics.com',
+    'googletagmanager.com': 'googletagmanager.com',
+    'googleapis.cn': 'googleapis.cn',
+    'google.cn': 'google.cn',
+    'google.co.jp': 'google.co.jp',
+    'google.co.uk': 'google.co.uk',
+    'google.de': 'google.de',
+    'google.fr': 'google.fr',
+    
+    // CDN Providers (10)
+    'cloudflare.com': 'cloudflare.com',
+    'cloudflare.net': 'cloudflare.net',
+    'fastly.net': 'fastly.net',
+    'akamai.net': 'akamai.net',
+    'akamaiedge.net': 'akamaiedge.net',
+    'edgecastcdn.net': 'edgecastcdn.net',
+    'stackpathcdn.com': 'stackpathcdn.com',
+    'bunnycdn.com': 'bunnycdn.com',
+    'azureedge.net': 'azureedge.net',
+    'cloudfront.net': 'cloudfront.net',
+    
+    // Cloud Platforms (9)
+    'amazonaws.com': 'amazonaws.com',
+    'digitaloceanspaces.com': 'digitaloceanspaces.com',
+    'vercel.app': 'vercel.app',
+    'netlify.app': 'netlify.app',
+    'github.io': 'github.io',
+    'workers.dev': 'workers.dev',
+    'pages.dev': 'pages.dev',
+    'herokuapp.com': 'herokuapp.com',
+    'fly.dev': 'fly.dev'
+};
         // SNI options - common TLS endpoints that support HTTP/2 and TLS 1.3 [citation:5][citation:7]
         const SNI_OPTIONS = {
             'auto': null,
@@ -792,7 +844,7 @@
         // Loading messages
         const loadingMessages = [
             'ESTABLISHING SECURE HANDSHAKE',
-            'VERIFYING XHTTP TRANSPORT',
+            'VERIFYING HTTP TRANSPORT',
             'LOADING CRYPTOGRAPHIC MODULES',
             'CONNECTING TO EDGE NETWORK',
             'FINALIZING DEPLOYMENT'
