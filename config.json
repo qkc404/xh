@@ -2,6 +2,14 @@
     "log": {
         "loglevel": "warning"
     },
+    "dns": {
+        "servers": [
+            "1.1.1.1",
+            "8.8.8.8",
+            "https+local://dns.cloudflare.com/dns-query"
+        ],
+        "queryStrategy": "UseIPv4"
+    },
     "inbounds": [
         {
             "tag": "VLESS_HTTPUPGRADE_IN",
@@ -29,8 +37,7 @@
                     "tcpNoDelay": true,
                     "tcpKeepAliveIdle": 15,
                     "tcpKeepAliveInterval": 10,
-                    "tcpKeepAliveCount": 5,
-                    "tcpcongestion": "bbr"
+                    "tcpKeepAliveCount": 5
                 }
             },
             "sniffing": {
@@ -47,8 +54,7 @@
             "streamSettings": {
                 "sockopt": {
                     "tcpFastOpen": true,
-                    "tcpNoDelay": true,
-                    "tcpcongestion": "bbr"
+                    "tcpNoDelay": true
                 }
             }
         }
