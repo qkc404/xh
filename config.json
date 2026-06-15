@@ -1,16 +1,10 @@
 {
     "log": {
-        "loglevel": "warning",
-        "access": "/dev/stdout",
-        "error": "/dev/stderr"
-    },
-    "dns": {
-        "servers": ["1.1.1.1", "8.8.8.8"],
-        "queryStrategy": "UseIPv4"
+        "loglevel": "warning"
     },
     "inbounds": [
         {
-            "tag": "VLESS_XHTTP_IN",
+            "tag": "VLESS_HTTPUPGRADE_IN",
             "listen": "127.0.0.1",
             "port": 10000,
             "protocol": "vless",
@@ -25,30 +19,23 @@
                 "decryption": "none"
             },
             "streamSettings": {
-                "network": "xhttp",
-                "xhttpSettings": {
-                    "path": "/saeka",
-                    "host": "",
-                    "mode": "packet-up",
-                    "xmux": {
-                        "maxConcurrency": "16-32"
-                    },
-                    "xPaddingBytes": "100-1000",
-                    "headers": {
-                        "Referer": "https://www.google.com/"
-                    }
+                "network": "httpupgrade",
+                "httpupgradeSettings": {
+                    "path": "/saeka?ed=1280",
+                    "host": ""
                 },
                 "sockopt": {
                     "tcpFastOpen": true,
                     "tcpNoDelay": true,
-                    "tcpKeepAliveIdle": 30,
-                    "tcpKeepAliveInterval": 15,
-                    "tcpKeepAliveCount": 5
+                    "tcpKeepAliveIdle": 15,
+                    "tcpKeepAliveInterval": 10,
+                    "tcpKeepAliveCount": 3,
+                    "tcpcongestion": "bbr"
                 }
             },
             "sniffing": {
                 "enabled": true,
-                "destOverride": ["http", "tls", "quic"]
+                "destOverride": ["http", "tls"]
             }
         }
     ],
@@ -56,7 +43,14 @@
         {
             "tag": "DIRECT",
             "protocol": "freedom",
-            "settings": {}
+            "settings": {},
+            "streamSettings": {
+                "sockopt": {
+                    "tcpFastOpen": true,
+                    "tcpNoDelay": true,
+                    "tcpcongestion": "bbr"
+                }
+            }
         }
     ]
-            }
+}
