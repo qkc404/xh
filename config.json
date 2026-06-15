@@ -28,12 +28,15 @@
                 "network": "xhttp",
                 "xhttpSettings": {
                     "path": "/saeka",
-                    "mode": "packet-up",
                     "host": "",
+                    "mode": "packet-up",
                     "xmux": {
                         "maxConcurrency": "16-32"
                     },
-                    "xPaddingBytes": "100-1000"
+                    "xPaddingBytes": "100-1000",
+                    "headers": {
+                        "Referer": "https://www.google.com/"
+                    }
                 },
                 "sockopt": {
                     "tcpFastOpen": true,
@@ -56,4 +59,4 @@
             "settings": {}
         }
     ]
-}
+            }
