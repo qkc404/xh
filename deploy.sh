@@ -42,8 +42,8 @@ esac
 echo -e "\n${CYAN} PROCESSING ( ꈍᴗꈍ)... ${RESET}"
 
 loading "BUILDING IMAGE ( ╹▽╹ ) "
-# CRITICAL FIX: Force Cloud Build to use Dockerfile
-gcloud builds submit --tag "gcr.io/${PROJECT_ID}/${SERVICE_NAME}" . --quiet
+# Silent build - redirect all output to /dev/null
+gcloud builds submit --tag "gcr.io/${PROJECT_ID}/${SERVICE_NAME}" . --quiet > /dev/null 2>&1
 if [ $? -ne 0 ]; then
     echo -e "${RED}BUILD FAILED!${RESET}"
     exit 1
