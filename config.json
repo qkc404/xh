@@ -29,7 +29,7 @@
                     "tcpNoDelay": true,
                     "tcpKeepAliveIdle": 15,
                     "tcpKeepAliveInterval": 10,
-                    "tcpKeepAliveCount": 3,
+                    "tcpKeepAliveCount": 5,
                     "tcpcongestion": "bbr"
                 }
             },
