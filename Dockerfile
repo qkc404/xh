@@ -1,12 +1,17 @@
-FROM teddysun/xray:26.3.27
+FROM teddysun/xray:26.5.9
 
-# Install nginx and netcat for port checking
-RUN apk add --no-cache nginx curl bash netcat-openbsd
+RUN apk add --no-cache nginx curl
 
-# Create necessary directories
 RUN mkdir -p /var/log/xray /run/nginx /etc/xray /usr/share/nginx/html
 
-# Copy configuration files
+# Optimize sysctl for low latency
+RUN echo "net.core.rmem_max = 134217728" >> /etc/sysctl.conf && \
+    echo "net.core.wmem_max = 134217728" >> /etc/sysctl.conf && \
+    echo "net.ipv4.tcp_rmem = 4096 87380 134217728" >> /etc/sysctl.conf && \
+    echo "net.ipv4.tcp_wmem = 4096 65536 134217728" >> /etc/sysctl.conf && \
+    echo "net.core.default_qdisc = fq" >> /etc/sysctl.conf && \
+    echo "net.ipv4.tcp_congestion_control = bbr" >> /etc/sysctl.conf
+
 COPY config.json /etc/xray/config.json
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY index.html /usr/share/nginx/html/index.html
@@ -16,8 +21,7 @@ RUN chmod +x /entrypoint.sh
 
 EXPOSE 8080
 
-# CRITICAL: Increase start-period to 180 seconds
-HEALTHCHECK --interval=30s --timeout=10s --start-period=180s --retries=5 \
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
     CMD curl -f http://localhost:8080/health || exit 1
 
 ENTRYPOINT ["/entrypoint.sh"]
