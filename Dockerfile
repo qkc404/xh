@@ -1,24 +1,24 @@
-FROM alpine:3.19 AS base
-RUN apk add --no-cache ca-certificates curl wget unzip
+FROM teddysun/xray:26.3.27
 
-FROM base AS xray-builder
-RUN wget -q -O /tmp/xray.zip https://github.com/XTLS/Xray-core/releases/download/v26.3.27/Xray-linux-64.zip && \
-    unzip -q /tmp/xray.zip -d /tmp && \
-    mv /tmp/xray /usr/local/bin/ && \
-    chmod +x /usr/local/bin/xray && \
-    rm -rf /tmp/xray.zip /tmp/xray
+# Install nginx
+RUN apk add --no-cache nginx curl bash
 
-FROM nginx:alpine
-RUN apk add --no-cache ca-certificates curl bash
-COPY --from=xray-builder /usr/local/bin/xray /usr/local/bin/xray
-RUN mkdir -p /var/log/xray /run/nginx /etc/xray
+# Create necessary directories
+RUN mkdir -p /var/log/xray /run/nginx /etc/xray /usr/share/nginx/html
+
+# Copy configuration files
 COPY config.json /etc/xray/config.json
 COPY nginx.conf /etc/nginx/nginx.conf
+COPY index.html /usr/share/nginx/html/index.html
 COPY entrypoint.sh /entrypoint.sh
+
+# Make entrypoint executable
 RUN chmod +x /entrypoint.sh
+
+# Expose Cloud Run port
 EXPOSE 8080
 
-# HEALTHCHECK with longer start period to allow Xray to initialize
+# Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=5 \
     CMD curl -f http://localhost:8080/health || exit 1
 
