@@ -15,7 +15,6 @@ fi
 
 echo "[$(date)] Xray started successfully (PID: $XRAY_PID)"
 
-# Test nginx configuration
 echo "[$(date)] Testing nginx configuration..."
 nginx -t
 
