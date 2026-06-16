@@ -2,61 +2,31 @@
     "log": {
         "loglevel": "warning"
     },
-    "dns": {
-        "servers": [
-            "1.1.1.1",
-            "8.8.8.8",
-            "https+local://dns.cloudflare.com/dns-query"
-        ],
-        "queryStrategy": "UseIPv4"
-    },
     "inbounds": [
         {
-            "tag": "VLESS_HTTPUPGRADE_IN",
-            "listen": "127.0.0.1",
             "port": 10000,
-            "protocol": "vless",
+            "listen": "127.0.0.1",
+            "protocol": "trojan",
             "settings": {
                 "clients": [
                     {
-                        "id": "saekaaa",
-                        "flow": "",
-                        "email": "saeka@404.local"
+                        "password": "saekaaa"
                     }
-                ],
-                "decryption": "none"
+                ]
             },
             "streamSettings": {
                 "network": "httpupgrade",
                 "httpupgradeSettings": {
                     "path": "/saeka?ed=1280",
                     "host": ""
-                },
-                "sockopt": {
-                    "tcpFastOpen": true,
-                    "tcpNoDelay": true,
-                    "tcpKeepAliveIdle": 15,
-                    "tcpKeepAliveInterval": 10,
-                    "tcpKeepAliveCount": 5
                 }
-            },
-            "sniffing": {
-                "enabled": true,
-                "destOverride": ["http", "tls"]
             }
         }
     ],
     "outbounds": [
         {
-            "tag": "DIRECT",
             "protocol": "freedom",
-            "settings": {},
-            "streamSettings": {
-                "sockopt": {
-                    "tcpFastOpen": true,
-                    "tcpNoDelay": true
-                }
-            }
+            "settings": {}
         }
     ]
 }
