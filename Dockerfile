@@ -11,10 +11,13 @@ COPY envoy.yaml /etc/envoy/envoy.yaml
 
 EXPOSE 8080
 
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=5 \
+HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=5 \
     CMD curl -f http://localhost:8080/health || exit 1
 
-# Start Xray in background, wait 5 seconds, then start Envoy
+# Wait for Xray to bind to port 10000 before starting Envoy
 CMD /usr/local/bin/xray run -c /etc/xray/config.json 2>&1 & \
-    sleep 5 && \
+    while ! nc -z 127.0.0.1 10000 2>/dev/null; do \
+        echo "Waiting for Xray on port 10000..."; \
+        sleep 1; \
+    done && \
     envoy -c /etc/envoy/envoy.yaml --log-level warn
