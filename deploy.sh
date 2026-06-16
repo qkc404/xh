@@ -27,7 +27,7 @@ PROJECT_ID=$(gcloud config get-value project 2>/dev/null | tr -d '[:space:]')
 read -r -p "$(echo -e "${CYAN}  NAME [service name]: ${RESET}")" INPUT_NAME
 SERVICE_NAME=${INPUT_NAME:-trojan-proxy}
 
-read -r -p "$(echo -e "${CYAN}  DECOY URL [www.wikipedia.org]: ${RESET}")" USER_DECOY
+read -r -p "$(echo -e "${CYAN}  DECOY URL : ${RESET}")" USER_DECOY
 FINAL_DECOY=${USER_DECOY:-www.wikipedia.org}
 CLEAN_DECOY=$(echo "$FINAL_DECOY" | sed 's|https\?://||' | sed 's|/.*$||')
 
