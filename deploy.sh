@@ -18,16 +18,23 @@ loading() {
 
 clear
 echo -e "${BLUE}────────────────────────────────────────────────────${RESET}"
-echo -e "${CYAN}     VLESS FAST DEPLOYER MADE BY SAEKA TOJIRP${RESET}"
-echo -e "${CYAN}     (☞ ^o^) ☞ fb.com/saekacutiee | newbie${RESET}"
+echo -e "${CYAN}     TROJAN FAST DEPLOYER MADE BY SAEKA TOJIRP${RESET}"
+echo -e "${CYAN}     fb.com/saekacutiee | newbie${RESET}"
 echo -e "${BLUE}────────────────────────────────────────────────────${RESET}"
 
 PROJECT_ID=$(gcloud config get-value project 2>/dev/null | tr -d '[:space:]')
 
-read -r -p "$(echo -e "${CYAN}  NAME (*´ω｀*) [service name]: ${RESET}")" INPUT_NAME
-SERVICE_NAME=${INPUT_NAME:-vless-proxy}
+read -r -p "$(echo -e "${CYAN}  NAME [service name]: ${RESET}")" INPUT_NAME
+SERVICE_NAME=${INPUT_NAME:-trojan-proxy}
 
-echo -e "\n${CYAN} SELECT PERFORMANCE (◠‿◕): ${RESET}"
+read -r -p "$(echo -e "${CYAN}  DECOY URL [www.wikipedia.org]: ${RESET}")" USER_DECOY
+FINAL_DECOY=${USER_DECOY:-www.wikipedia.org}
+CLEAN_DECOY=$(echo "$FINAL_DECOY" | sed 's|https\?://||' | sed 's|/.*$||')
+
+# Update envoy.yaml with the decoy domain
+sed -i "s|DECOY_PLACEHOLDER|$CLEAN_DECOY|g" envoy.yaml
+
+echo -e "\n${CYAN} SELECT PERFORMANCE: ${RESET}"
 echo -e "${YELLOW}  1) 1 vCPU / 2Gi RAM${RESET}"
 echo -e "${YELLOW}  2) 2 vCPU / 4Gi RAM${RESET}"
 echo -e "${YELLOW}  3) 4 vCPU / 8Gi RAM${RESET}"
@@ -39,17 +46,17 @@ case "$PAIR_CHOICE" in
     *) CPU="2"; RAM="4Gi" ;;
 esac
 
-echo -e "\n${CYAN} PROCESSING ( ꈍᴗꈍ)... ${RESET}"
+echo -e "\n${CYAN} PROCESSING... ${RESET}"
 
-loading "BUILDING IMAGE ( ╹▽╹ ) "
-# Silent build - redirect all output to /dev/null
-gcloud builds submit --tag "gcr.io/${PROJECT_ID}/${SERVICE_NAME}" . --quiet > /dev/null 2>&1
+loading "BUILDING IMAGE"
+gcloud builds submit --tag "gcr.io/${PROJECT_ID}/${SERVICE_NAME}" . --quiet > build.log 2>&1
 if [ $? -ne 0 ]; then
-    echo -e "${RED}BUILD FAILED!${RESET}"
+    echo -e "${RED}BUILD FAILED${RESET}"
+    tail -n 10 build.log
     exit 1
 fi
 
-loading "CONFIGURING CLOUD RUN ADJUSTMENTS ( ꈍᴗꈍ) "
+loading "DEPLOYING TO CLOUD RUN"
 gcloud run deploy "$SERVICE_NAME" \
   --image "gcr.io/${PROJECT_ID}/${SERVICE_NAME}" \
   --platform managed \
@@ -58,8 +65,6 @@ gcloud run deploy "$SERVICE_NAME" \
   --memory "$RAM" \
   --port 8080 \
   --concurrency 1000 \
-  --cpu-boost \
-  --no-cpu-throttling \
   --timeout 3600 \
   --min-instances 1 \
   --max-instances 4 \
@@ -67,7 +72,7 @@ gcloud run deploy "$SERVICE_NAME" \
   --quiet > deploy.log 2>&1
 
 if [ $? -ne 0 ]; then
-    echo -e "${RED}DEPLOYMENT FAILED (╥﹏╥)!${RESET}"
+    echo -e "${RED}DEPLOYMENT FAILED${RESET}"
     tail -n 10 deploy.log
     exit 1
 fi
@@ -76,8 +81,8 @@ SERVICE_URL=$(gcloud run services describe "$SERVICE_NAME" --region us-central1 
 CLEAN_HOST=$(echo "$SERVICE_URL" | sed 's|https://||')
 
 echo -e "\n${BLUE}────────────────────────────────────────────────────${RESET}"
-echo -e "${CYAN} DEPLOYED SUCCESSFULLY (◠‿・)—☆ ${RESET}"
-echo -e "${CYAN} FULL URL (｡•̀ᴗ-)  ${GREEN}${SERVICE_URL}${RESET}"
+echo -e "${CYAN} DEPLOYED SUCCESSFULLY ${RESET}"
+echo -e "${CYAN} FULL URL ${GREEN}${SERVICE_URL}${RESET}"
 echo -e "${BLUE}────────────────────────────────────────────────────${RESET}"
 
 rm -f build.log deploy.log
