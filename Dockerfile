@@ -1,11 +1,14 @@
+FROM teddysun/xray:26.5.9 AS xray-bin
 FROM envoyproxy/envoy:v1.31.6
 
-RUN apt-get update && apt-get install -y wget unzip && \
-    wget -q -O /tmp/xray.zip https://github.com/XTLS/Xray-core/releases/download/v26.5.9/Xray-linux-64.zip && \
-    unzip -q /tmp/xray.zip -d /tmp && \
-    mv /tmp/xray /usr/local/bin/ && \
-    chmod +x /usr/local/bin/xray && \
-    rm -rf /tmp/xray.zip /tmp/xray
+# Copy Xray - try multiple possible paths
+RUN mkdir -p /usr/local/bin
+COPY --from=xray-bin /usr/local/bin/xray /usr/local/bin/xray || \
+    COPY --from=xray-bin /usr/bin/xray /usr/local/bin/xray || \
+    COPY --from=xray-bin /usr/local/sbin/xray /usr/local/bin/xray
+
+# Verify Xray binary exists
+RUN test -f /usr/local/bin/xray || (echo "Xray binary not found" && exit 1)
 
 COPY config.json /etc/xray/config.json
 COPY envoy.yaml /etc/envoy/envoy.yaml
